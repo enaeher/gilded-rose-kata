@@ -3,7 +3,7 @@
 (defn sulfuras? [{:keys [name]}]
   (= "Sulfuras, Hand of Ragnaros" name))
 
-(defn update-item-quality [item]
+(defn update-item-sell-in [item]
   (if (not (sulfuras? item))
     (update item :sell-in dec)
     item))
@@ -19,7 +19,7 @@
        (not (aged-brie? item))
        (not (sulfuras? item))))
 
-(defn update-item-quality-special-cases [{:keys [sell-in quality] :as item}]
+(defn update-item-quality [{:keys [sell-in quality] :as item}]
   (assoc
    item :quality
    (cond
@@ -47,7 +47,7 @@
 
 (defn update-quality [items]
   (map
-   (comp update-item-quality-special-cases update-item-quality)
+   (comp update-item-quality update-item-sell-in)
    items))
 
 (defn item [item-name, sell-in, quality]
