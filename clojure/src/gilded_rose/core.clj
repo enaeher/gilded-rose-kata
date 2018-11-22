@@ -1,12 +1,9 @@
 (ns gilded-rose.core)
 
+;; Item type helpers
+
 (defn sulfuras? [{:keys [name]}]
   (= "Sulfuras, Hand of Ragnaros" name))
-
-(defn update-item-sell-in [item]
-  (if (not (sulfuras? item))
-    (update item :sell-in dec)
-    item))
 
 (defn backstage-pass? [{:keys [name]}]
   (= "Backstage passes to a TAFKAL80ETC concert" name))
@@ -19,7 +16,18 @@
        (not (aged-brie? item))
        (not (sulfuras? item))))
 
-(defn update-item-quality [{:keys [sell-in quality] :as item}]
+;; Nightly update helpers for items
+
+(defn update-item-sell-in
+  "Updates the sell-in date for a single item."
+  [item]
+  (if (not (sulfuras? item))
+    (update item :sell-in dec)
+    item))
+
+(defn update-item-quality
+  "Updates the quality for a single item."
+  [{:keys [sell-in quality] :as item}]
   (assoc
    item :quality
    (cond
