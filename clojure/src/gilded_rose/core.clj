@@ -35,7 +35,8 @@
 
      (standard-item? item) (cond
                              (< sell-in 0) (- quality 2)
-                             :else (dec quality)))))
+                             :else (max (dec quality) 0)))))
+
 
 (defn update-quality [items]
   (map

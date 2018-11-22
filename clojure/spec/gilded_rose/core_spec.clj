@@ -15,8 +15,6 @@
          (update-quality [(item "+5 Dexterity Vest" 0 20)]))
       "Past the sell-by date, quality decreases twice as fast"))
 
-;; This test is failing because the existing system does not implement
-;; the spec as written.
 (deftest quality-will-not-go-negative
   (is (= [(item "+5 Dexterity Vest" 4 0)]
          (update-quality [(item "+5 Dexterity Vest" 5 0)]))
