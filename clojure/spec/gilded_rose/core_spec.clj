@@ -1,6 +1,6 @@
 (ns gilded-rose.core-spec
   (:require [clojure.test :refer :all]
-            [gilded-rose.core :refer [update-quality item]]))
+            [gilded-rose.core :refer [update-quality item conjure]]))
 
 (deftest gilded-rose-test
   (is (= "foo" (:name (first (update-quality [(item "foo" 0 0)]))))))
@@ -54,3 +54,13 @@
   (is (= [(item "Backstage passes to a TAFKAL80ETC concert" -1 0)]
          (update-quality [(item "Backstage passes to a TAFKAL80ETC concert" 0 20)]))
       "Backstage passes drop to zero after the concert"))
+
+(deftest conjured-standard-item-test
+  (is (= [(conjure (item "+5 Dexterity Vest" 9 18))]
+         (update-quality [(conjure (item "+5 Dexterity Vest" 10 20))]))
+      "At each update, sell-in and quality decrease by 2"))
+
+(deftest conjured-past-sell-by-date-test
+  (is (= [(conjure (item "+5 Dexterity Vest" -1 16))]
+         (update-quality [(conjure (item "+5 Dexterity Vest" 0 20))]))
+      "Past the sell-by date, quality decreases twice as fast"))

@@ -54,6 +54,11 @@
 (defn item [item-name, sell-in, quality]
   {:name item-name, :sell-in sell-in, :quality quality})
 
+(defn conjure
+  "Takes an item and returns an equivalent conjured item."
+  [item]
+  (assoc item :conjured? true))
+
 (defn update-current-inventory[]
   (let [inventory 
         [(item "+5 Dexterity Vest" 10 20)
