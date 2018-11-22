@@ -45,10 +45,30 @@
                              (< sell-in 0) (- quality 2)
                              :else (max (dec quality) 0)))))
 
+(defn apply-conjuring
+  "Takes an update-fn and a conjured item. Applies the update-fn, then
+  doubles any decrease in quality in the updated item."
+  [update-fn {:keys [quality] :as item}]
+  (let [{updated-quality :quality :as updated-item} (update-fn item)
+        quality-decrease (- quality updated-quality)]
+    (if (pos? quality-decrease)
+      (update updated-item :quality #(- % quality-decrease))
+      updated-item)))
 
-(defn update-quality [items]
+(defn maybe-apply-conjuring
+  "Takes an update-fn and an item. If the item is conjured, apply
+  conjuring, otherwise call the update-fn directly."
+  [update-fn {:keys [conjured?] :as item}]
+  (if conjured?
+    (apply-conjuring update-fn item)
+    (update-fn item)))
+
+(defn update-quality
+  "Nightly inventory update. Takes a sequence of items and returns a
+  sequence of updated items."
+  [items]
   (map
-   (comp update-item-quality update-item-sell-in)
+   (partial maybe-apply-conjuring (comp update-item-quality update-item-sell-in))
    items))
 
 (defn item [item-name, sell-in, quality]
