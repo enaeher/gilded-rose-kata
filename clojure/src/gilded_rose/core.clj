@@ -19,29 +19,31 @@
        (not (aged-brie? item))
        (not (sulfuras? item))))
 
-(defn update-item-quality-special-cases [{:keys [sell-in] :as item}]
-  (cond
-    (and (< sell-in 0)
-         (backstage-pass? item))
-    (merge item {:quality 0})
-    (or (aged-brie? item) (backstage-pass? item))
-    (if (and (backstage-pass? item)
-             (>= sell-in 5)
-             (< sell-in 10))
-      (merge item {:quality (inc (inc (:quality item)))})
-      (if (and (backstage-pass? item)
-               (>= sell-in 0) (< sell-in 5))
-        (merge item {:quality (inc (inc (inc (:quality item))))})
-        (if (< (:quality item) 50)
-          (merge item {:quality (inc (:quality item))})
-          item)))
-    (< sell-in 0)
-    (if (standard-item? item)
-      (merge item {:quality (- (:quality item) 2)})
-      item)
-    (standard-item? item)
-    (merge item {:quality (dec (:quality item))})
-    :else item))
+(defn update-item-quality-special-cases [{:keys [sell-in quality] :as item}]
+  (assoc
+   item :quality
+   (cond
+     (and (< sell-in 0)
+          (backstage-pass? item))
+     0
+     (or (aged-brie? item) (backstage-pass? item))
+     (if (and (backstage-pass? item)
+              (>= sell-in 5)
+              (< sell-in 10))
+       (+ quality 2)
+       (if (and (backstage-pass? item)
+                (>= sell-in 0) (< sell-in 5))
+         (+ quality 3)
+         (if (< quality 50)
+           (inc quality)
+           quality)))
+     (< sell-in 0)
+     (if (standard-item? item)
+       (- quality 2)
+       quality)
+     (standard-item? item)
+     (dec quality)
+     :else quality)))
 
 (defn update-quality [items]
   (map
