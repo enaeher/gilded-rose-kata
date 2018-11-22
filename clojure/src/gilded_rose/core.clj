@@ -23,27 +23,19 @@
   (assoc
    item :quality
    (cond
-     (and (< sell-in 0)
-          (backstage-pass? item))
-     0
-     (or (aged-brie? item) (backstage-pass? item))
-     (if (and (backstage-pass? item)
-              (>= sell-in 5)
-              (< sell-in 10))
-       (+ quality 2)
-       (if (and (backstage-pass? item)
-                (>= sell-in 0) (< sell-in 5))
-         (+ quality 3)
-         (if (< quality 50)
-           (inc quality)
-           quality)))
-     (< sell-in 0)
-     (if (standard-item? item)
-       (- quality 2)
-       quality)
-     (standard-item? item)
-     (dec quality)
-     :else quality)))
+     (backstage-pass? item) (cond
+                              (< sell-in 0) 0
+                              (> 5 sell-in -1) (+ quality 3)
+                              (> 10 sell-in 4) (+ quality 2)
+                              :else (inc quality))
+
+     (aged-brie? item) (min (inc quality) 50)
+
+     (sulfuras? item) quality
+
+     (standard-item? item) (cond
+                             (< sell-in 0) (- quality 2)
+                             :else (dec quality)))))
 
 (defn update-quality [items]
   (map
