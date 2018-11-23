@@ -52,7 +52,7 @@
   (let [{updated-quality :quality :as updated-item} (update-fn item)
         quality-decrease (- quality updated-quality)]
     (if (pos? quality-decrease)
-      (update updated-item :quality #(- % quality-decrease))
+      (assoc updated-item :quality (max (- updated-quality quality-decrease) 0))
       updated-item)))
 
 (defn maybe-apply-conjuring

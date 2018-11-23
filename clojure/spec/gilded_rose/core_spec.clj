@@ -64,3 +64,8 @@
   (is (= [(conjure (item "+5 Dexterity Vest" -1 16))]
          (update-quality [(conjure (item "+5 Dexterity Vest" 0 20))]))
       "Past the sell-by date, quality decreases twice as fast"))
+
+(deftest conjured-quality-will-not-go-negative
+  (is (= [(conjure (item "+5 Dexterity Vest" 4 0))]
+         (update-quality [(conjure (item "+5 Dexterity Vest" 5 1))]))
+      "Quality is never negative"))
